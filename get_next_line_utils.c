@@ -6,7 +6,7 @@
 /*   By: aantonie <aantonie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 23:09:32 by aantonie          #+#    #+#             */
-/*   Updated: 2024/03/06 19:58:37 by aantonie         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:32:31 by aantonie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,44 +46,13 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (str);
 }
 
-/**
- * @note cast becasue str is of type pointer to void - void*
- * @note -- I need str to be of type pointer to char - char*
- */
-// void	ft_bzero(void *str, size_t n)
-// {
-// 	size_t	i;
-
-// 	if (!str)
-// 		return ;
-// 	i = 0;
-// 	while (i < n)
-// 	{
-// 		*(char *)(str + 1) = '\0';
-// 		i++;
-// 	}
-// }
-
-void	*ft_bzero(void *str, size_t n)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < n)
-	{
-		*((unsigned char *)str + i) = '\0';
-		i++;
-	}
-	return (str);
-}
-
 void	*ft_calloc(size_t count, size_t size)
 {
 	void	*ptr;
 
 	if (count >= 2147483647 || size >= 2147483647)
 		return (NULL);
-	ptr = (void *)malloc(count * size);
+	ptr = malloc(size * count);
 	if (!ptr)
 		return (NULL);
 	ft_bzero(ptr, count * size);
@@ -111,7 +80,7 @@ char	*ft_strchr(char *s, int c)
 
 size_t	ft_strlen(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!str)

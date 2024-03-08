@@ -6,7 +6,7 @@
 /*   By: aantonie <aantonie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/03 15:47:51 by aantonie          #+#    #+#             */
-/*   Updated: 2024/03/06 20:11:03 by aantonie         ###   ########.fr       */
+/*   Updated: 2024/03/08 18:33:54 by aantonie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ char	*ft_extract_line(char *buffer)
 	while (buffer[i] != '\0' && buffer[i] != '\n')
 		i++;
 	line = ft_calloc(i + 2, sizeof(char));
+	if (!line)
+		return (free(buffer), NULL);
 	i = 0;
 	while (buffer[i] != '\0' && buffer[i] != '\n')
 	{
@@ -77,6 +79,8 @@ char	*ft_next_line(char *buffer)
 		return (NULL);
 	}
 	new_line = ft_calloc(ft_strlen(buffer) - i + 1, sizeof(char));
+	if(!new_line)
+		return(free(buffer), NULL);
 	i++;
 	j = 0;
 	while (buffer[i] != '\0')
@@ -98,30 +102,30 @@ char	*ft_next_line(char *buffer)
  * @brief 5. if no bytes are read -> free the buffer
  * @brief 6. read() reaturns -1 if an error occurs while reading the file
  */
-static char	*read_from_file(int fd, char *file_content)
+char	*read_from_file(int fd, char *line)
 {
 	int		byte_read;
-	char	buffer[BUFFER_SIZE + 1];
+	char	temp[BUFFER_SIZE + 1];
 
 	// if (!file_content)
 	// 	file_content = ft_calloc(1, 1);
 	// buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	byte_read = 1;
-	ft_bzero(&buffer, BUFFER_SIZE + 1);
+	
 	while (byte_read > 0)
 	{
-		byte_read = read(fd, buffer, BUFFER_SIZE);
+		byte_read = read(fd, temp, BUFFER_SIZE);
 		if (byte_read < 0)
 		{
-			free(buffer);
+			free(line);
 			return (NULL);
 		}
-		buffer[byte_read] = '\0';
-		file_content = ft_free(file_content, buffer);
-		if (ft_strchr(buffer, '\n'))
+		temp[byte_read] = '\0';
+		line = ft_strjoin(line, temp);
+		if (ft_strchr(temp, '\n'))
 			break ;
 	}
-	return (file_content);
+	return (line); 
 }
 
 /**
@@ -133,12 +137,13 @@ char	*get_next_line(int fd)
 	static char	*buffer;
 	char		*current_line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	buffer = read_from_file(fd, buffer);
 	if (buffer == NULL)
 		return (NULL);
 	current_line = ft_extract_line(buffer);
 	buffer = ft_next_line(buffer);
+	
 	return (current_line);
 }
